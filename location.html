@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Location</title>
+    <style>
+        /* Centering container */
+        body{
+            background-image: url('bg.jpg'); /* Specify the URL of your image */
+            background-size: cover; /* Cover the entire background */
+            background-repeat: no-repeat; /* No repeating of the background image */
+            background-attachment: fixed; /* Fixed position */
+            backdrop-filter: blur(6px);
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            font-size: large;
+        }
+
+        /* Style for button */
+        .share-location-button {
+            padding: 10px 20px;
+            background-color: #45a049;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block; /* Initially visible */
+        }
+        .share-location-button:hover {
+            background-color:#45a049;
+        }
+
+        /* Style for success message */
+        #shareSuccessMessage {
+            font-weight: bold;
+            font-size: 24px;
+            color: black;
+            display: none; /* Initially hidden */
+        }
+
+        /* Style for location result */
+        #locationResult {
+            font-size: large;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="shareLocationHeader">SHARE YOUR LOCATION</h1>
+        <!-- Button to share location -->
+        <button class="share-location-button" id="shareLocationButton">Share Location</button>
+        <p id="locationResult"></p> <!-- Display location coordinates here -->
+        <p id="shareSuccessMessage"></p> <!-- Display success message here -->
+    </div>
+
+    <script>
+        document.getElementById('shareLocationButton').addEventListener('click', function() {
+            // Hide the header and the share location button
+            document.getElementById('shareLocationHeader').style.display = 'none';
+            document.getElementById('shareLocationButton').style.display = 'none';
+
+            // Check if geolocation is supported by the browser
+            if (navigator.geolocation) {
+                // Request the user's current position
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Extract latitude and longitude from the position object
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    // Display the location coordinates
+                    var locationText = 'Latitude: ' + latitude + ', Longitude: ' + longitude;
+                    document.getElementById('locationResult').innerHTML = locationText;
+
+                    // Display success message
+                    var successMessage = 'Location shared successfully.';
+                    document.getElementById('shareSuccessMessage').innerHTML = successMessage;
+                    document.getElementById('shareSuccessMessage').style.display = 'block'; // Show the success message
+                }, function(error) {
+                    // Handle errors if geolocation request fails
+                    var errorMessage = '';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'User denied the request for Geolocation.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Location information is unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'The request to get user location timed out.';
+                            break;
+                        case error.UNKNOWN_ERROR:
+                            errorMessage = 'An unknown error occurred.';
+                            break;
+                    }
+                    document.getElementById('locationResult').innerHTML = 'Error: ' + errorMessage;
+                });
+            } else {
+                document.getElementById('locationResult').innerHTML = 'Geolocation is not supported by this browser.';
+            }
+        });
+    </script>
+</body>
+</html>
